@@ -1,5 +1,6 @@
 """Support for SmartThings Cloud."""
 from __future__ import annotations
+from typing import List
 
 import asyncio
 from collections.abc import Iterable
@@ -281,11 +282,13 @@ class DeviceBroker:
         self.devices = {device.device_id: device for device in devices}
         self.scenes = {scene.scene_id: scene for scene in scenes}
 
-    def _assign_capabilities(self, devices: Iterable):
+    def _assign_capabilities(self, devices: List[DeviceEntity]):
         """Assign platforms to capabilities."""
         assignments = {}
         for device in devices:
-            capabilities = device.capabilities.copy()
+            capabilities: List[str] = device.capabilities.copy()
+            for component_id, component_capabilities in device.components.items():
+                flat_capabilities: List[str] = [component_id + ]
             slots = {}
             for platform in PLATFORMS:
                 platform_module = importlib.import_module(
